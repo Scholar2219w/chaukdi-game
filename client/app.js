@@ -1,3 +1,4 @@
+console.log('[APP] app.js loaded');
 /* ══════════════════════════
    CONSTANTS
 ══════════════════════════ */
@@ -51,15 +52,24 @@ function openConn(code){
   const proto = location.protocol==='https:'? 'wss:' : 'ws:';
   const host = location.host || 'localhost:3000';
   const url = proto+'//'+host;
+  console.log('[WS] Connecting to', url, 'room:', code);
   ws = new WebSocket(url);
   ws.addEventListener('open', ()=>{
+    console.log('[WS] Connected');
     ws.send(JSON.stringify({t:'reg',room:code,name:myName}));
     // flush pending
     while(pendingSends.length){const m=pendingSends.shift();ws.send(JSON.stringify(m));}
   });
-  ws.addEventListener('message', e=>{try{const msg=JSON.parse(e.data);handleMsg(msg);}catch(err){}}
+  ws.addEventListener('message', e=>{try{const msg=JSON.parse(e.data);handleMsg(msg);}catch(err){console.error('[WS] Parse error:', err);}}
   );
-  ws.addEventListener('close', ()=>{ws=null;});
+  ws.addEventListener('error', (e)=>{
+    console.error('[WS] Error:', e);
+    alert('Connection error: '+e.message);
+  });
+  ws.addEventListener('close', ()=>{
+    console.log('[WS] Closed');
+    ws=null;
+  });
 }
 function bcast(msg){
   if(ws&&ws.readyState===1) ws.send(JSON.stringify(msg));
@@ -106,25 +116,51 @@ function getName(){const n=document.getElementById('inp-name').value.trim();if(!
 function randCode(){return Math.random().toString(36).slice(2,7).toUpperCase();}
 
 function createRoom(){
-  const n=getName();if(!n)return;
-  myName=n;myPos='south';isHost=true;roomCode=randCode();
-  seatedNames={south:myName};
-  document.getElementById('code-display').textContent=roomCode;
-  showPanel('panel-create');openConn(roomCode);buildSeatList('slist-host');
-  document.getElementById('host-msg').textContent='3 more players needed…';
+  try {
+    console.log('[LOBBY] createRoom clicked');
+    const n=getName();if(!n)return;
+    myName=n;myPos='south';isHost=true;roomCode=randCode();
+    seatedNames={south:myName};
+    document.getElementById('code-display').textContent=roomCode;
+    showPanel('panel-create');openConn(roomCode);buildSeatList('slist-host');
+    document.getElementById('host-msg').textContent='3 more players needed…';
+  } catch(e) {
+    console.error('[LOBBY] createRoom error:', e);
+    alert('Error creating room: '+e.message);
+  }
 }
-function showJoin(){const n=getName();if(!n)return;myName=n;showPanel('panel-join');}
+function showJoin(){
+  try {
+    console.log('[LOBBY] showJoin clicked');
+    const n=getName();if(!n)return;myName=n;showPanel('panel-join');
+  } catch(e) {
+    console.error('[LOBBY] showJoin error:', e);
+    alert('Error: '+e.message);
+  }
+}
 function soloPlay(){
-  const n=getName();if(!n)return;
-  myName=n;myPos='south';isHost=true;
-  seatedNames={south:myName,north:'Bot N',west:'Bot W',east:'Bot E'};
-  beginGame();
+  try {
+    console.log('[LOBBY] soloPlay clicked');
+    const n=getName();if(!n)return;
+    myName=n;myPos='south';isHost=true;
+    seatedNames={south:myName,north:'Bot N',west:'Bot W',east:'Bot E'};
+    beginGame();
+  } catch(e) {
+    console.error('[LOBBY] soloPlay error:', e);
+    alert('Error starting solo game: '+e.message);
+  }
 }
 function joinRoom(){
-  const code=document.getElementById('inp-code').value.trim().toUpperCase();
-  if(code.length<4){document.getElementById('join-msg').textContent='Enter a valid code.';return;}
-  roomCode=code;openConn(roomCode);bcast({t:'jr',name:myName});
-  document.getElementById('join-msg').textContent='Requesting seat…';
+  try {
+    console.log('[LOBBY] joinRoom clicked');
+    const code=document.getElementById('inp-code').value.trim().toUpperCase();
+    if(code.length<4){document.getElementById('join-msg').textContent='Enter a valid code.';return;}
+    roomCode=code;openConn(roomCode);bcast({t:'jr',name:myName});
+    document.getElementById('join-msg').textContent='Requesting seat…';
+  } catch(e) {
+    console.error('[LOBBY] joinRoom error:', e);
+    alert('Error joining room: '+e.message);
+  }
 }
 function onJoinReq(m){
   if(!isHost)return;
