@@ -1,0 +1,287 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:Georgia,serif;background:#0d2e18;color:#f0e6c8;user-select:none}
+.screen{display:none;width:100vw;height:100vh}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* ── LOBBY ── */
+#screen-lobby{background:radial-gradient(ellipse at 50% 45%,#1a5c32,#0a1e10)}
+.logo{font-size:3rem;font-weight:bold;color:#c9a84c;letter-spacing:8px;text-shadow:0 0 30px rgba(201,168,76,.4);margin-bottom:4px}
+.logo-sub{font-size:.78rem;letter-spacing:4px;color:rgba(255,255,255,.35);margin-bottom:28px}
+.panel{background:rgba(0,0,0,.5);border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:26px 30px;width:370px;max-width:93vw}
+.panel h2{font-size:.82rem;letter-spacing:3px;color:#c9a84c;margin-bottom:18px;text-transform:uppercase}
+.inp{width:100%;padding:10px 13px;background:rgba(255,255,255,.08);border:1px solid rgba(201,168,76,.3);border-radius:7px;color:#f0e6c8;font-size:1rem;font-family:Georgia,serif;outline:none;margin-bottom:9px}
+.inp:focus{border-color:#c9a84c}
+.inp::placeholder{color:rgba(255,255,255,.3)}
+.inp-code{text-align:center;letter-spacing:6px;font-size:1.3rem;text-transform:uppercase}
+.gbtn{width:100%;padding:11px;border:none;border-radius:7px;font-family:Georgia,serif;font-size:.83rem;letter-spacing:2px;cursor:pointer;margin-bottom:7px;transition:filter .15s,transform .1s}
+.gbtn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.gbtn:active{transform:translateY(0)}
+.gbtn-gold{background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#1a1208;font-weight:bold}
+.gbtn-dim{background:transparent;border:1px solid rgba(201,168,76,.4);color:#c9a84c}
+.or-div{display:flex;align-items:center;gap:10px;margin:6px 0;color:rgba(255,255,255,.22);font-size:.78rem}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1)}
+.code-big{font-size:2.4rem;letter-spacing:10px;color:#c9a84c;text-align:center;padding:13px;background:rgba(0,0,0,.4);border-radius:8px;border:1px solid rgba(201,168,76,.2);margin-bottom:11px}
+.slist{list-style:none}
+.slist li{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.88rem}
+.ttag{font-size:.63rem;padding:2px 7px;border-radius:4px;letter-spacing:1px}
+.ttag-A{background:rgba(52,152,219,.2);color:#7ec8e3;border:1px solid rgba(52,152,219,.3)}
+.ttag-B{background:rgba(231,76,60,.2);color:#f0a090;border:1px solid rgba(231,76,60,.3)}
+.smsg{font-size:.8rem;color:rgba(255,255,255,.4);margin-top:7px;min-height:18px}
+.hidden{display:none!important}
+
+/* ── GAME TABLE ── */
+#screen-game{position:relative;background:radial-gradient(ellipse at 50% 50%,#1b5e35 0%,#0d2e18 100%);overflow:hidden}
+#felt-oval{position:absolute;top:50%;left:50%;width:60vw;height:52vh;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,#216b3e 0%,#174e2c 50%,#0d3018 100%);border:5px solid #7a5e20;box-shadow:0 0 70px rgba(0,0,0,.7),inset 0 0 35px rgba(0,0,0,.35);pointer-events:none;z-index:0}
+
+/* HUD */
+#hud{position:absolute;top:7px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:14px;align-items:center;background:rgba(0,0,0,.72);padding:5px 16px;border-radius:20px;border:1px solid rgba(201,168,76,.22);white-space:nowrap}
+.hi{text-align:center}
+.hl{display:block;font-size:.46rem;letter-spacing:1.5px;color:rgba(255,255,255,.32);text-transform:uppercase}
+.hv{font-size:.86rem;color:#c9a84c;font-weight:bold}
+.hsep{width:1px;height:24px;background:rgba(255,255,255,.1)}
+
+/* Timer ring */
+#turn-timer-wrap{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;align-items:center;gap:2px}
+#ttimer-label{font-size:.52rem;letter-spacing:2px;color:rgba(255,255,255,.4);text-align:center}
+#ttimer-ring{position:relative;width:48px;height:48px}
+#ttimer-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+#timer-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:4}
+#timer-arc{fill:none;stroke:#c9a84c;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+#ttimer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:bold;color:#c9a84c}
+
+/* ── PLAYER ZONES ── */
+.pzone{position:absolute;display:flex;align-items:center;gap:4px;z-index:10;transition:all .2s}
+#zone-south{bottom:20px;left:50%;transform:translateX(-50%);flex-direction:column;align-items:center}
+#zone-north{top:20px;left:50%;transform:translateX(-50%);flex-direction:column;align-items:center}
+#zone-west{left:20px;top:50%;transform:translateY(-50%);flex-direction:row;align-items:flex-start}
+#zone-east{right:20px;top:50%;transform:translateY(-50%);flex-direction:row;align-items:flex-start}
+
+.pname-label{font-size:.62rem;letter-spacing:1.5px;color:#c9a84c;text-align:center;white-space:nowrap;padding:2px 5px;position:relative}
+.pname-label .pn{font-size:.72rem;font-weight:bold}
+.pname-label .pt{font-size:.56rem;color:rgba(255,255,255,.38)}
+
+/* ── ARROW TURN INDICATOR ── */
+/* Arrow overlaid on each zone's label — points toward centre of table */
+.turn-arrow{
+  display:none;
+  position:absolute;
+  font-size:1.3rem;
+  color:#c9a84c;
+  filter:drop-shadow(0 0 6px rgba(201,168,76,.9));
+  animation:arrowPulse .7s ease-in-out infinite alternate;
+  pointer-events:none;
+  z-index:30;
+}
+@keyframes arrowPulse{from{transform:translateY(0) scale(1)}to{transform:translateY(3px) scale(1.15)}}
+
+/* south arrow — points up (toward table center) */
+#zone-south .turn-arrow{bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);display:none}
+/* north arrow — points down */
+#zone-north .turn-arrow{top:calc(100% + 2px);left:50%;transform:translateX(-50%);display:none}
+/* west arrow — points right */
+#zone-west .turn-arrow{left:calc(100% + 2px);top:50%;transform:translateY(-50%);display:none}
+/* east arrow — points left */
+#zone-east .turn-arrow{right:calc(100% + 2px);top:50%;transform:translateY(-50%);display:none}
+
+.pzone.active-turn .turn-arrow{display:block!important}
+.pzone.active-turn .pname-label{color:#fff}
+.pzone.active-turn::after{content:'';position:absolute;inset:-4px;border-radius:10px;border:2px solid rgba(201,168,76,.4);pointer-events:none}
+
+.rows{display:flex;flex-direction:column;gap:2px;align-items:center}
+.row{display:flex;flex-direction:row;gap:2px}
+.cols{display:flex;flex-direction:row;gap:3px;align-items:flex-start}
+.col{display:flex;flex-direction:column;gap:2px}
+.slbl{font-size:.43rem;color:rgba(255,255,255,.24);letter-spacing:.8px;text-align:center}
+.slbl-v{font-size:.43rem;color:rgba(255,255,255,.24);letter-spacing:.8px;writing-mode:vertical-rl;transform:rotate(180deg)}
+
+/* ═══════════════════════════════
+   CARD STYLES — Real playing card look
+═══════════════════════════════ */
+.card{
+  width:58px;
+  height:82px;
+  border-radius:7px;
+  background:#f8f6f2;
+  border:1px solid rgba(0,0,0,.18);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:5px;
+  flex-shrink:0;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.9);
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+
+.card::after{
+  content:'';
+  position:absolute;
+  inset:2px;
+  border-radius:5px;
+  border:1px solid rgba(0,0,0,.04);
+  pointer-events:none;
+}
+
+.c-tl,.c-br{
+  font-family:Georgia,serif;
+  font-weight:bold;
+  line-height:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  z-index:2;
+}
+
+.c-tl{
+  font-size:13px;
+}
+
+.c-br{
+  font-size:13px;
+  align-self:flex-end;
+  transform:rotate(180deg);
+}
+
+.c-tl span,.c-br span{
+  font-size:12px;
+  margin-top:1px;
+}
+
+.c-pips{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  pointer-events:none;
+}
+
+.pip-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+}
+
+.pip{
+  font-size:14px;
+  line-height:1;
+}
+
+.card.red .c-tl,
+.card.red .c-br,
+.card.red .pip{
+  color:#d63228;
+}
+
+.card.black .c-tl,
+.card.black .c-br,
+.card.black .pip{
+  color:#111;
+}
+
+
+/* Back of hand card */
+.card-back{width:48px;height:68px;border-radius:5px;border:1.5px solid #2a5a8c;background:linear-gradient(135deg,#1c3f64,#0e2338);box-shadow:1px 2px 5px rgba(0,0,0,.55);flex-shrink:0;position:relative;overflow:hidden}
+.card-back::after{content:'';position:absolute;inset:3px;border-radius:3px;border:1px solid rgba(255,255,255,.12);background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.04) 3px,rgba(255,255,255,.04) 4px)}
+
+/* Face-down hidden slot */
+.card-hidden{width:48px;height:68px;border-radius:5px;border:1.5px solid rgba(201,168,76,.35);background:linear-gradient(135deg,#1a4030,#0d2518);box-shadow:1px 2px 5px rgba(0,0,0,.55);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:rgba(201,168,76,.22)}
+.slot-empty{width:48px;height:68px;flex-shrink:0}
+
+/* Trump suit marker */
+.card.is-trump{border-color:#e74c3c;box-shadow:0 0 7px rgba(231,76,60,.5)}
+
+/* Playable card — must play (bright gold) */
+.card.playable{border-color:#c9a84c;box-shadow:0 0 14px rgba(201,168,76,.9);cursor:pointer}
+.card.playable:hover{transform:translateY(-12px) scale(1.05);box-shadow:0 6px 24px rgba(201,168,76,1)}
+.card.is-trump.playable{border-color:#ff6b5b;box-shadow:0 0 16px rgba(255,107,91,.95)}
+.card.is-trump.playable:hover{transform:translateY(-12px) scale(1.05)}
+
+/* Free choice card (teammate winning — silver glow) */
+.card.free-choice{border-color:rgba(180,180,220,.7);box-shadow:0 0 8px rgba(180,180,220,.5);cursor:pointer;opacity:.9}
+.card.free-choice:hover{transform:translateY(-8px);opacity:1}
+
+/* Trick card */
+@keyframes dropIn{from{transform:scale(.8) translateY(-10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.card.in-trick{
+  animation:dropIn .25s ease forwards;
+  pointer-events:none;
+  transform:scale(1.08);
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.55);
+}
+
+/* ── Trick center ── */
+#trick-center{
+  position:absolute;
+  top:43%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:300px;
+  height:230px;
+  z-index:20;
+
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:1fr 1fr 1fr;
+
+  gap:12px;
+}
+.tslot{display:flex;align-items:center;justify-content:center}
+.tslot.tn{grid-column:2;grid-row:1}
+.tslot.ts{grid-column:2;grid-row:3}
+.tslot.tw{grid-column:1;grid-row:2}
+.tslot.te{grid-column:3;grid-row:2}
+
+/* ── TRUMP BAR — bottom-right corner ── */
+#trump-bar{
+  position:absolute;bottom:14px;right:14px;
+  z-index:60;
+  width:220px;
+  background:rgba(0,0,0,.88);
+  border:1px solid rgba(201,168,76,.35);
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+#trump-bar.hidden{display:none!important}
+.tbar-title{font-size:.82rem;color:#c9a84c;letter-spacing:2px;text-align:center}
+.tbar-sub{font-size:.62rem;color:rgba(255,255,255,.42);text-align:center;line-height:1.4}
+#trump-timer-track{width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+#trump-timer-fill{height:100%;background:#c9a84c;border-radius:2px;transition:width 1s linear}
+.tbar-timer-txt{font-size:.62rem;color:rgba(255,255,255,.38)}
+.suits-row{display:flex;gap:8px;justify-content:center}
+.sc{width:42px;height:54px;background:#fff;border:1.5px solid rgba(0,0,0,.12);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;font-size:1.5rem;box-shadow:1px 3px 7px rgba(0,0,0,.5);transition:transform .18s,border-color .18s,box-shadow .18s}
+.sc:hover:not(:disabled){transform:translateY(-4px) scale(1.08);border-color:#c9a84c;box-shadow:0 5px 16px rgba(201,168,76,.5)}
+.sc:disabled{opacity:.25;cursor:default}
+.sc .sc-name{font-size:.5rem;letter-spacing:.5px;color:#444;font-family:Georgia,serif}
+.sc.red{color:#c0392b}.sc.red .sc-name{color:#c0392b}
+.pass-lnk{font-size:.65rem;color:rgba(255,255,255,.38);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:Georgia,serif}
+.pass-lnk:hover{color:#c9a84c}
+
+/* ── Log ── */
+#game-log{position:absolute;bottom:14px;left:14px;z-index:50;width:170px;max-height:95px;overflow-y:auto;background:rgba(0,0,0,.72);border:1px solid rgba(201,168,76,.14);border-radius:8px;padding:5px 8px;font-size:.66rem}
+#game-log p{color:rgba(255,255,255,.5);line-height:1.45;margin-bottom:1px}
+#game-log p.win{color:#e8c97a}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3);border-radius:2px}
+
+/* Trick win flash */
+#trick-flash{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:40;pointer-events:none;font-size:1rem;font-weight:bold;color:#e8c97a;letter-spacing:2px;text-align:center;opacity:0;transition:opacity .2s;background:rgba(0,0,0,.6);padding:7px 16px;border-radius:8px;border:1px solid rgba(201,168,76,.3)}
+
+/* ── RESULT ── */
+#screen-result{background:radial-gradient(ellipse at 50% 45%,#1a5c32,#0a1e10);text-align:center;gap:14px}
+.r-title{font-size:3rem;color:#c9a84c;letter-spacing:4px}
+.r-detail{font-size:1rem;color:rgba(255,255,255,.65);line-height:2.2}
