@@ -63,11 +63,16 @@ function openConn(code){
   ws.addEventListener('message', e=>{try{const msg=JSON.parse(e.data);handleMsg(msg);}catch(err){console.error('[WS] Parse error:', err);}}
   );
   ws.addEventListener('error', (e)=>{
-    console.error('[WS] Error:', e);
-    alert('Connection error: '+e.message);
+    console.error('[WS] Error event:', e);
+    const msg = e?.message || e?.code || 'unknown';
+    const joinMsg = document.getElementById('join-msg');
+    if(joinMsg) joinMsg.textContent = 'Connection failed';
+    alert('Connection error: '+msg);
   });
-  ws.addEventListener('close', ()=>{
-    console.log('[WS] Closed');
+  ws.addEventListener('close', (e)=>{
+    console.log('[WS] Closed', e);
+    const joinMsg = document.getElementById('join-msg');
+    if(joinMsg && (!ws || ws.readyState !== 1)) joinMsg.textContent = 'Connection closed';
     ws=null;
   });
 }

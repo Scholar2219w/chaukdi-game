@@ -15,10 +15,12 @@ const wss = new WebSocket.Server({ server });
 // rooms: Map roomCode -> Set of ws
 const rooms = new Map();
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
+  console.log('[WS] connection from', req.socket.remoteAddress, 'port', req.socket.remotePort);
   ws.on('message', (data) => {
     let msg;
-    try { msg = JSON.parse(data); } catch (e) { return; }
+    try { msg = JSON.parse(data); } catch (e) { console.warn('[WS] invalid JSON:', data.toString()); return; }
+    console.log('[WS] recv', msg.t, 'room:', msg.room, 'name:', msg.name);
 
     // registration: {t:'reg',room, name}
     if (msg.t === 'reg' && msg.room) {
