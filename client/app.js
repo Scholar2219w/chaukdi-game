@@ -38,7 +38,7 @@ const TURN_SECS=25, TRUMP_SECS=45;
 /* ══════════════════════════
    STATE
 ══════════════════════════ */
-let myPos='south',myName='',isHost=false,roomCode='';
+let myPos='',myName='',isHost=false,roomCode='';
 let seatedNames={};
 let G=null, ws=null, pendingSends=[];
 let turnTimerInt=null, turnLeft=TURN_SECS;
@@ -137,7 +137,7 @@ function createRoom(){
 function showJoin(){
   try {
     console.log('[LOBBY] showJoin clicked');
-    const n=getName();if(!n)return;myName=n;showPanel('panel-join');
+    const n=getName();if(!n)return;myName=n;myPos='';isHost=false;showPanel('panel-join');
   } catch(e) {
     console.error('[LOBBY] showJoin error:', e);
     alert('Error: '+e.message);
@@ -160,6 +160,7 @@ function joinRoom(){
     console.log('[LOBBY] joinRoom clicked');
     const code=document.getElementById('inp-code').value.trim().toUpperCase();
     if(code.length<4){document.getElementById('join-msg').textContent='Enter a valid code.';return;}
+    myPos='';
     roomCode=code;openConn(roomCode);bcast({t:'jr',name:myName});
     document.getElementById('join-msg').textContent='Requesting seat…';
   } catch(e) {
@@ -179,7 +180,7 @@ function onJoinReq(m){
 function onRoomUpd(m){
   seatedNames=m.seated;
   const e=Object.entries(seatedNames).find(([,n])=>n===myName);
-  if(e&&(!myPos||myPos==='south'))myPos=e[0];
+  if(e) myPos=e[0];
   document.getElementById('join-msg').textContent=myPos?`You are ${myPos.toUpperCase()}`:'Waiting…';
   document.getElementById('slist-join').classList.remove('hidden');
   buildSeatList('slist-join');
